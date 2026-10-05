@@ -197,6 +197,9 @@ For each email record:
 | 1 | Test plan and production function inventory created | PASS | Repository code reviewed 2026-10-01 | — |
 | 2 | Public signup form reachability | PASS | Live TinyFish browser: form fields, Terms checkbox and Smartsupp visible; no errors | — |
 | 3 | Cody authenticated baseline | PASS | Live dashboard: Cody Woods, customer VLM-00000004, Active, 0 accounts, 0 transactions, 0 notifications, KYC not submitted | — |
+| 4 | Preferences persistence | PASS | Africa/Lagos; transaction/security email alerts ON; in-app notifications ON; statement delivery Digital; persisted after reload | — |
+| 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created as General / Normal / Open | — |
+| 6 | Notification creation and mark-read | PASS | “Support case created” appeared unread; mark-all-read reduced unread count from 1 to 0 | — |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
