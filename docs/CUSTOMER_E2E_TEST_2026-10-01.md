@@ -220,6 +220,7 @@ For each email record:
 | 24 | Customer restoration | PASS | Staff restore action returned Cody relationship to Active; all three accounts remained Active | — |
 | 25 | Restriction audit trail | PASS | Security & Audit shows Customer Access Restricted and Customer Access Restored with operator, reason/timestamp/IP/user-agent | — |
 | 26 | Generic relationship status control | PASS AFTER FIX | Control was missing from all 3 customer-detail UIs; added consistently to Master/Admin/Support and live-tested on Cody Active → Suspended → Active; final state Active | Resolved shared UI gap |
+| 27 | Master staff webmail send | FAIL | Compose page loaded, but controlled email send to Cody failed with “Mailbox credentials are not available on this host.” | Production config: DEVELOPER_EMAIL_PASSWORD unavailable to staff-mail module; no email sent |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
