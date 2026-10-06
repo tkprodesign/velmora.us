@@ -64,4 +64,4 @@ Any future UI, validation, or behavior change to this relationship-status contro
 
 ## Change log
 
-- 2026-10-06 — Exposed the previously backend-only `Active / Suspended` relationship-status selector on the customer detail page in all three staff panels. Live QA retest pending deployment.
+- 2026-10-06 — Exposed the previously backend-only `Active / Suspended` relationship-status selector on the customer detail page in all three staff panels. Live QA passed in Master: Cody Woods was changed Active → Suspended → Active through the normal UI and left Active. The same UI control is deployed in Admin and Support.
