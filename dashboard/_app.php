@@ -151,6 +151,18 @@ function v3OwnedAccount(mysqli $db, string $email, string $accountNumber): ?arra
     return $row;
 }
 
+function v3OwnedAccountForUpdate(mysqli $db, string $email, string $accountNumber): ?array {
+    $stmt = $db->prepare("SELECT account_number, account_type, currency, account_status
+        FROM accounts WHERE user_email = ? AND account_number = ? LIMIT 1 FOR UPDATE");
+    $stmt->bind_param('ss', $email, $accountNumber);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc() ?: null;
+    $stmt->close();
+    if ($row) $row['currency'] = strtoupper((string)$row['currency']);
+    return $row;
+}
+
 function v3AccountBalance(mysqli $db, string $accountNumber): float {
     $stmt = $db->prepare("SELECT COALESCE(SUM(CASE WHEN status IS NULL OR LOWER(status) <> 'failed' THEN amount ELSE 0 END), 0)
         FROM transactions WHERE account_number = ?");
@@ -331,10 +343,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['v3_execute_exchange']
     $db = connectToDatabase();
     $db->begin_transaction();
     try {
-        $source = v3OwnedAccount($db, $user_email, (string)$quote['from_account']);
-        $target = v3OwnedAccount($db, $user_email, (string)$quote['to_account']);
-        if (!$source || !$target || $source['currency'] !== $quote['source_currency'] || $target['currency'] !== $quote['target_currency']) {
-            throw new RuntimeException('Account details changed after the quote.');
+        $lockNumbers = [(string)$quote['from_account'], (string)$quote['to_account']];
+        sort($lockNumbers, SORT_STRING);
+        $lockedAccounts = [];
+        foreach ($lockNumbers as $lockNumber) {
+            $lockedAccounts[$lockNumber] = v3OwnedAccountForUpdate($db, $user_email, $lockNumber);
+        }
+        $source = $lockedAccounts[(string)$quote['from_account']] ?? null;
+        $target = $lockedAccounts[(string)$quote['to_account']] ?? null;
+        if (
+            !$source || !$target ||
+            $source['account_status'] !== 'Active' ||
+            $target['account_status'] !== 'Active' ||
+            $source['currency'] !== $quote['source_currency'] ||
+            $target['currency'] !== $quote['target_currency']
+        ) {
+            throw new RuntimeException('Account details or status changed after the quote.');
         }
 
         $balance = v3AccountBalance($db, (string)$quote['from_account']);
@@ -480,9 +504,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['v3_execute_transfer']
     }
 
     $db = connectToDatabase();
+    $db->begin_transaction();
     try {
-        $source = v3OwnedAccount($db, $user_email, (string)$quote['from_account']);
-        if (!$source || $source['currency'] !== $quote['source_currency']) throw new RuntimeException('Source account changed.');
+        $source = v3OwnedAccountForUpdate($db, $user_email, (string)$quote['from_account']);
+        if (
+            !$source ||
+            $source['account_status'] !== 'Active' ||
+            $source['currency'] !== $quote['source_currency']
+        ) throw new RuntimeException('Source account details or status changed.');
         if ((float)$quote['amount'] > v3AccountBalance($db, (string)$quote['from_account'])) throw new RuntimeException('Insufficient funds.');
 
         $txid = v3TransactionId('TRF');
@@ -533,11 +562,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['v3_execute_transfer']
             'Transfer',
             '/dashboard/transactions/detail/?ref=' . urlencode($txid)
         );
+        $db->commit();
         $db->close();
 
         unset($_SESSION['v3_transfer_quote']);
         v3PostMessage('success', 'Transfer submitted for bank processing. Reference: ' . $txid);
     } catch (Throwable $e) {
+        $db->rollback();
         $db->close();
         v3PostMessage('error', 'Transfer could not be submitted: ' . $e->getMessage());
     }
