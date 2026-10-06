@@ -227,6 +227,7 @@ For each email record:
 | 31 | Support panel authentication/parity | PASS | Support login at /support-control-panel/ confirmed as support@velmorabank.us; live overview healthy; Cody appears Approved with no pending KYC/transfers | — |
 | 32 | Support staff webmail send | PASS | Controlled email to Cody returned “Message sent.” and appeared in the Support Sent folder | Recipient-inbox delivery still pending separate verification |
 | 33 | Support case parity | PASS | From Support role, reply to resolved Cody case persisted, auto-moved Resolved → In Review, reassigned to support@velmorabank.us, then returned to Resolved | Final case state Resolved |
+| 34 | Staff webmail architecture consistency | FAIL | Support webmail works with the one physical SpaceMail mailbox, but Admin/Master staff-mail code still expects per-role mailbox passwords. This conflicts with docs/email-architecture.md, which defines one physical support@ mailbox plus aliases/Resend. | Code/design mismatch; requires implementation decision for Admin/Master virtual mailboxes |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
