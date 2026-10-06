@@ -211,6 +211,14 @@ For each email record:
 | 15 | Transactions empty-state + controls | PASS | History page loaded; search and All/Credits/Debits/Pending filters present and interactive; no transactions yet | — |
 | 16 | Statements account selection | PASS | USD/EUR/GBP accounts selectable; current-period empty state correct for each; CSV link present | — |
 | 17 | Security center | PASS | Customer VLM-00000004 Active; sign-in/security events visible; password/preferences/security-support links load | — |
+| 18 | Staff KYC lifecycle | PASS | Master panel changed Cody KYC Pending → Rejected → Pending → Approved; notes persisted; final state Approved | — |
+| 19 | Staff support reply | PASS | Staff reply saved to VLM-SUP-20261001-EB8AA6; case auto-moved Open → In Review and assigned operator | — |
+| 20 | Staff support status | PASS | Case status changed In Review → Resolved through normal staff UI | — |
+| 21 | Bank-account restriction/restoration | PASS | GBP account 2778019838 changed Active → Restricted → Active through staff UI; final state Active | — |
+| 22 | Staff ledger adjustment submission | BLOCKED | Automation safety layer blocked before form submission; no credit/debit posted and balances unchanged | Tool constraint, not site defect |
+| 23 | Customer restriction | PASS | Cody relationship changed Active → Restricted with QA reason, operator and timestamp; existing customer session subsequently redirected to login | — |
+| 24 | Customer restoration | PASS | Staff restore action returned Cody relationship to Active; all three accounts remained Active | — |
+| 25 | Restriction audit trail | PASS | Security & Audit shows Customer Access Restricted and Customer Access Restored with operator, reason/timestamp/IP/user-agent | — |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
