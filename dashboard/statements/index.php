@@ -19,7 +19,7 @@ if($account){
     $start=strtotime($month.'-01 00:00:00');
     $end=strtotime('+1 month',$start);
     $stmt=$db->prepare("SELECT transaction_id,type,description,amount,currency,status,time,channel,value_date,posted_at
-        FROM transactions WHERE user_email=? AND account_number=? AND time>=? AND time<? ORDER BY time ASC,id ASC");
+        FROM transactions WHERE user_email=? AND account_number=? AND (status IS NULL OR LOWER(status)<>'failed') AND time>=? AND time<? ORDER BY time ASC,id ASC");
     $stmt->bind_param('ssii',$user_email,$accountNumber,$start,$end);
     $stmt->execute();$res=$stmt->get_result();while($r=$res->fetch_assoc())$rows[]=$r;$stmt->close();
 }
@@ -49,7 +49,7 @@ if(isset($_GET['download'])&&$_GET['download']==='csv'&&$account){
 $monthly=[];
 $db=connectToDatabase();
 $stmt=$db->prepare("SELECT DATE_FORMAT(FROM_UNIXTIME(time),'%Y-%m') AS period,COUNT(*) AS tx_count
-    FROM transactions WHERE user_email=? GROUP BY period ORDER BY period DESC LIMIT 12");
+    FROM transactions WHERE user_email=? AND (status IS NULL OR LOWER(status)<>'failed') GROUP BY period ORDER BY period DESC LIMIT 12");
 $stmt->bind_param('s',$user_email);$stmt->execute();$res=$stmt->get_result();while($r=$res->fetch_assoc())$monthly[]=$r;$stmt->close();$db->close();
 
 v3PageStart('Statements','statements',$profile,$user_profile_picture);
