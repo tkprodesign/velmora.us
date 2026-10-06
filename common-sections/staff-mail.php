@@ -2,13 +2,22 @@
 declare(strict_types=1);
 
 function staffMailRoleMailbox(string $role): array {
-    $cfg = velmoraBackendRoleConfig($role);
-    $email = strtolower(trim((string)($cfg['email'] ?? '')));
-    $password = (string)($cfg['password'] ?? '');
+    $roleCfg = velmoraBackendRoleConfig($role);
+    $supportCfg = velmoraBackendRoleConfig('support');
+
+    // Velmora currently has one physical SpaceMail mailbox. Staff roles keep
+    // separate application credentials, but all three webmail surfaces use
+    // the shared operations mailbox for IMAP/SMTP transport.
+    $transportEmail = strtolower(trim((string)(getenv('SMTP_USERNAME') ?: ($supportCfg['email'] ?? ''))));
+    $transportPassword = (string)(getenv('SMTP_PASSWORD') ?: ($supportCfg['password'] ?? ''));
+    $identityEmail = strtolower(trim((string)($roleCfg['email'] ?? '')));
+
     return [
         'role' => $role,
-        'email' => $email,
-        'password' => $password,
+        'email' => $transportEmail,
+        'identity_email' => $identityEmail,
+        'password' => $transportPassword,
+        'shared_mailbox' => true,
         'imap_host' => getenv('IMAP_HOST') ?: 'mail.spacemail.com',
         'imap_port' => (int)(getenv('IMAP_PORT') ?: 993),
         'smtp_host' => getenv('SMTP_HOST') ?: 'mail.spacemail.com',
