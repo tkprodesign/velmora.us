@@ -129,18 +129,20 @@ if($_SERVER['REQUEST_METHOD']==='POST'&&isset($_POST['cpv2_adjust_ledger'])){
     $email=trim((string)($_POST['email']??''));$account=preg_replace('/\D+/','',(string)($_POST['account_number']??''));$direction=(string)($_POST['direction']??'');$amount=filter_var($_POST['amount']??null,FILTER_VALIDATE_FLOAT);$description=trim((string)($_POST['description']??''));
     if(!filter_var($email,FILTER_VALIDATE_EMAIL)||$account===''||!in_array($direction,['Credit','Debit'],true)||$amount===false||$amount<=0){cpv2Flash('error','Complete the ledger adjustment correctly.');cpv2Go('/support-control-panel/adjustments/');}
     $db=connectToDatabase();
-    $stmt=$db->prepare("SELECT currency,account_status FROM accounts WHERE user_email=? AND account_number=? LIMIT 1");$stmt->bind_param('ss',$email,$account);$stmt->execute();$acct=$stmt->get_result()->fetch_assoc();$stmt->close();
-    if(!$acct||$acct['account_status']==='Closed'){$db->close();cpv2Flash('error','Account was not found or is closed.');cpv2Go('/support-control-panel/adjustments/');}
+    $db->begin_transaction();
+    $stmt=$db->prepare("SELECT currency,account_status FROM accounts WHERE user_email=? AND account_number=? LIMIT 1 FOR UPDATE");$stmt->bind_param('ss',$email,$account);$stmt->execute();$acct=$stmt->get_result()->fetch_assoc();$stmt->close();
+    if(!$acct||$acct['account_status']==='Closed'){$db->rollback();$db->close();cpv2Flash('error','Account was not found or is closed.');cpv2Go('/support-control-panel/adjustments/');}
     $currency=strtoupper((string)$acct['currency']);$signed=$direction==='Credit'?abs((float)$amount):-abs((float)$amount);
     if($direction==='Debit'){
         $stmt=$db->prepare("SELECT COALESCE(SUM(CASE WHEN LOWER(status)<>'failed' THEN amount ELSE 0 END),0) FROM transactions WHERE account_number=?");$stmt->bind_param('s',$account);$stmt->execute();$stmt->bind_result($balance);$stmt->fetch();$stmt->close();
-        if(abs($signed)>(float)$balance){$db->close();cpv2Flash('error','Debit exceeds the available ledger balance.');cpv2Go('/support-control-panel/adjustments/');}
+        if(abs($signed)>(float)$balance){$db->rollback();$db->close();cpv2Flash('error','Debit exceeds the available ledger balance.');cpv2Go('/support-control-panel/adjustments/');}
     }
     $txid='OPS-'.strtoupper(bin2hex(random_bytes(7)));$type=$direction==='Credit'?'Operations Credit':'Operations Debit';$status='Successful';$now=time();$channel='Operations Console';$valueDate=date('Y-m-d',$now);$postedAt=date('Y-m-d H:i:s',$now);if($description==='')$description=$type.' adjustment';
     $stmt=$db->prepare("INSERT INTO transactions (type,transaction_id,user_email,account_number,amount,currency,description,status,time,channel,value_date,posted_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
     $stmt->bind_param('ssssdsssisss',$type,$txid,$email,$account,$signed,$currency,$description,$status,$now,$channel,$valueDate,$postedAt);$stmt->execute();$stmt->close();
     createUserNotification($db,$email,'Account adjustment posted',$description.' · '.velmoraFormatCurrency($signed,$currency).' · Reference '.$txid.'.','Account','/dashboard/transactions/detail/?ref='.urlencode($txid));
     recordSecurityEvent($db,$email,'Operations Adjustment','Operations console posted '.$txid);
+    $db->commit();
     $db->close();cpv2Flash('success','Ledger adjustment posted: '.$txid);cpv2Go('/support-control-panel/adjustments/');
 }
 
