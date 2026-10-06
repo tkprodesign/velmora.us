@@ -45,3 +45,23 @@ Preferred sender: `security@velmorabank.us` / **Velmora Bank Security**.
 Support and Security are operated by the same department head. The `security@velmorabank.us` alias intentionally uses the same SpaceMail mailbox credential as `support@velmorabank.us`, stored only as `SUPPORT_EMAIL_PASSWORD`. There is no separate `SECURITY_EMAIL_PASSWORD` requirement.
 
 Outbound alias mail remains Resend-first. If Resend is unavailable, the application safely falls back to the physical Support mailbox. The actual `security@` alias still has to exist provider-side and route into Support.
+
+
+## Shared relationship status control
+
+### Relationship status selector — added 2026-10-06
+
+All three panels expose the same customer-detail relationship-status control for:
+
+- `Active`
+- `Suspended`
+
+The control posts through the existing `cpv2_customer_status` handler. A move to `Suspended` revokes active customer sessions; returning the relationship to `Active` restores the normal relationship state.
+
+This control is separate from the richer `Restricted` investigation workflow above. `Restricted` retains its mandatory reason, operator/timestamp metadata, audit entry, session revocation and customer email notification.
+
+Any future UI, validation, or behavior change to this relationship-status control must be mirrored in Support, Admin and Master unless explicitly documented as role-specific.
+
+## Change log
+
+- 2026-10-06 — Exposed the previously backend-only `Active / Suspended` relationship-status selector on the customer detail page in all three staff panels. Live QA retest pending deployment.
