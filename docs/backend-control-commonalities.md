@@ -62,6 +62,21 @@ This control is separate from the richer `Restricted` investigation workflow abo
 
 Any future UI, validation, or behavior change to this relationship-status control must be mirrored in Support, Admin and Master unless explicitly documented as role-specific.
 
+## Shared ledger adjustment integrity
+
+### Account-row locking — added 2026-10-06
+
+All three staff panels use the same serialized ledger-adjustment behavior:
+
+- open a database transaction before the adjustment;
+- lock the target account row with `FOR UPDATE`;
+- calculate debit availability while that lock is held;
+- reject a debit that exceeds the available ledger balance;
+- post the adjustment, customer notification and security event before commit.
+
+This locking must remain mirrored across Support, Admin and Master. It also coordinates with customer transfer/FX execution, which now locks the same account row while re-checking balance and account status.
+
 ## Change log
 
+- 2026-10-06 — Serialized shared ledger adjustments across Support/Admin/Master with account-row locks and DB transactions; coordinated with transfer/FX execution locking.
 - 2026-10-06 — Exposed the previously backend-only `Active / Suspended` relationship-status selector on the customer detail page in all three staff panels. Live QA passed in Master: Cody Woods was changed Active → Suspended → Active through the normal UI and left Active. The same UI control is deployed in Admin and Support.
