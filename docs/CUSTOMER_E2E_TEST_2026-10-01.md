@@ -203,6 +203,9 @@ For each email record:
 | 7 | Create USD test account | PASS | QA USD Primary · Personal Checking · 2262941241 · Active · USD $0.00 | — |
 | 8 | Create EUR test account | PASS | QA EUR FX · Savings · 2605068880 · Active · EUR €0.00 | — |
 | 9 | Create GBP test account | PASS | QA GBP Status · Current · 2778019838 · Active · GBP £0.00 | — |
+| 10 | Account detail consistency | PASS | All 3 account detail pages loaded; number/type/currency/status/nickname matched portfolio; zero opening balances confirmed | — |
+| 11 | Account-open notifications | PASS | 3 unread “New account opened” notifications visible; support-case notification also retained | — |
+| 12 | Beneficiary mutation automation | BLOCKED | Browser safety layer blocked before submission; no beneficiary created or changed | Tool constraint, not site defect |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
