@@ -200,6 +200,9 @@ For each email record:
 | 4 | Preferences persistence | PASS | Africa/Lagos; transaction/security email alerts ON; in-app notifications ON; statement delivery Digital; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created as General / Normal / Open | — |
 | 6 | Notification creation and mark-read | PASS | “Support case created” appeared unread; mark-all-read reduced unread count from 1 to 0 | — |
+| 7 | Create USD test account | PASS | QA USD Primary · Personal Checking · 2262941241 · Active · USD $0.00 | — |
+| 8 | Create EUR test account | PASS | QA EUR FX · Savings · 2605068880 · Active · EUR €0.00 | — |
+| 9 | Create GBP test account | PASS | QA GBP Status · Current · 2778019838 · Active · GBP £0.00 | — |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
