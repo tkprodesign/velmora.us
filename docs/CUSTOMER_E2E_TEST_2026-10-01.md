@@ -207,6 +207,7 @@ For each email record:
 | 11 | Account-open notifications | PASS | 3 unread “New account opened” notifications visible; support-case notification also retained | — |
 | 12 | Beneficiary mutation automation | BLOCKED | Browser safety layer blocked before submission; no beneficiary created or changed | Tool constraint, not site defect |
 | 13 | KYC initial submission | FAIL | Synthetic KYC form data entered and submitted, but status remained “Not submitted” instead of Pending | P1 — new KYC INSERT bind list has 22 type specifiers for 21 bound values/placeholders; likely prevents first record creation |
+| 14 | Customer support reply | PASS | Reply added to case VLM-SUP-20261001-EB8AA6 through customer UI; case remained Open | — |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
