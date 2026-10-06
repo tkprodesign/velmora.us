@@ -23,6 +23,16 @@ Only aliases actually needed should be created; unused aliases should not be pub
 
 `no-reply@velmorabank.us` is an outbound identity and does not need to invite inbound correspondence. Application replies from no-reply messages are directed to Support.
 
+## Staff webmail
+
+All three backend panels (Support, Admin and Master) use the same physical SpaceMail operations mailbox for IMAP/SMTP access.
+
+- Staff authentication remains role-specific and continues to use each role's own application credentials.
+- Webmail transport does **not** use Admin or Master login passwords as mailbox credentials.
+- Preferred transport credentials are `SMTP_USERNAME` / `SMTP_PASSWORD`; when unavailable, the Support mailbox credentials are used as the physical mailbox fallback.
+- The shared inbox can receive mail sent to configured aliases that route into the Support mailbox.
+- Outbound role-specific alias identities remain an application-email concern handled through Resend where appropriate; the staff webmail itself is the shared operations mailbox.
+
 ## Outbound routing
 
 Preferred transport:
