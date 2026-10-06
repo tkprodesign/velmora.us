@@ -75,13 +75,13 @@ cpv2Start('Mail', 'mail');
   <div>
     <span class="op-kicker">STAFF WEBMAIL</span>
     <h1>Mail</h1>
-    <p>Send and receive mail through the mailbox assigned to this staff account.</p>
+    <p>Send and receive mail through Velmora's shared operations mailbox.</p>
   </div>
   <a class="op-btn primary" href="<?php echo htmlspecialchars($staffMailBase); ?>?action=compose"><span class="material-symbols-rounded">edit</span>Compose</a>
 </section>
 
 <?php if (!staffMailConfigured($mailbox)): ?>
-<div class="op-alert error">This mailbox is not connected on the production host yet. The staff mailbox password must be available to the server environment before IMAP/SMTP can authenticate.</div>
+<div class="op-alert error">The shared operations mailbox is not connected on the production host yet. Its IMAP/SMTP credentials must be available to the server environment.</div>
 <?php elseif (!staffMailImapAvailable()): ?>
 <div class="op-alert error">The server PHP IMAP extension is not enabled. Sending can use SMTP, but Inbox/Sent sync requires IMAP.</div>
 <?php endif; ?>
@@ -90,7 +90,7 @@ cpv2Start('Mail', 'mail');
   <aside class="op-panel op-mail-sidebar">
     <div class="op-mail-account">
       <span class="material-symbols-rounded">alternate_email</span>
-      <div><strong><?php echo htmlspecialchars((string)$mailbox['email']); ?></strong><small><?php echo htmlspecialchars(ucfirst((string)$staffMailRole)); ?> mailbox</small></div>
+      <div><strong><?php echo htmlspecialchars((string)$mailbox['email']); ?></strong><small>Shared operations mailbox · <?php echo htmlspecialchars(ucfirst((string)$staffMailRole)); ?> panel</small></div>
     </div>
     <a class="op-btn primary op-mail-compose" href="<?php echo htmlspecialchars($staffMailBase); ?>?action=compose"><span class="material-symbols-rounded">edit</span>Compose</a>
     <nav class="op-mail-folders">
