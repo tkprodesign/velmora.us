@@ -206,7 +206,7 @@ For each email record:
 | 10 | Account detail consistency | PASS | All 3 account detail pages loaded; number/type/currency/status/nickname matched portfolio; zero opening balances confirmed | — |
 | 11 | Account-open notifications | PASS | 3 unread “New account opened” notifications visible; support-case notification also retained | — |
 | 12 | Beneficiary mutation automation | BLOCKED | Browser safety layer blocked before submission; no beneficiary created or changed | Tool constraint, not site defect |
-| 13 | KYC initial submission | FAIL | Synthetic KYC form data entered and submitted, but status remained “Not submitted” instead of Pending | P1 — new KYC INSERT bind list has 22 type specifiers for 21 bound values/placeholders; likely prevents first record creation |
+| 13 | KYC initial submission | PASS AFTER FIX | Initial failure reproduced; bind_param bug fixed in commit 606d0806; retest shows Pending and all synthetic values persist after reload | Resolved P1 |
 | 14 | Customer support reply | PASS | Reply added to case VLM-SUP-20261001-EB8AA6 through customer UI; case remained Open | — |
 | 15 | Transactions empty-state + controls | PASS | History page loaded; search and All/Credits/Debits/Pending filters present and interactive; no transactions yet | — |
 | 16 | Statements account selection | PASS | USD/EUR/GBP accounts selectable; current-period empty state correct for each; CSV link present | — |
@@ -235,4 +235,4 @@ For each email record:
 
 ## Fixes applied during QA
 
-- 2026-10-06 — Initial KYC submission bug fixed in `dashboard/identity/index.php`: the INSERT `bind_param` signature was corrected from 22 string specifiers to 21, matching the 21 values/placeholders. Commit `606d0806`. Retest required after deployment completes.
+- 2026-10-06 — Initial KYC submission bug fixed in `dashboard/identity/index.php`: the INSERT `bind_param` signature was corrected from 22 string specifiers to 21, matching the 21 values/placeholders. Commit `606d0806`. Live retest passed: status becomes Pending and values persist after reload.
