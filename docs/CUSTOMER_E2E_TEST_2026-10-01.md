@@ -231,3 +231,8 @@ For each email record:
 - Return password to the owner-specified test credential.
 - Do not delete legitimate audit/security records produced by the test.
 - Keep the transaction/audit trail visible; do not hide/archive financial activity to make the test look clean.
+
+
+## Fixes applied during QA
+
+- 2026-10-06 — Initial KYC submission bug fixed in `dashboard/identity/index.php`: the INSERT `bind_param` signature was corrected from 22 string specifiers to 21, matching the 21 values/placeholders. Commit `606d0806`. Retest required after deployment completes.
