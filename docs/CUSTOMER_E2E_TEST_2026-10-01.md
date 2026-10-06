@@ -224,6 +224,9 @@ For each email record:
 | 28 | Master direct in-app communication | PASS | “Velmora QA notification test” queued to Cody through Communications and appears in notification log as Unread | — |
 | 29 | Admin panel authentication/parity | PARTIAL PASS | Admin login at /control-panel/ confirmed as admin@velmorabank.us; live overview healthy; deployed Admin UI exposes customer status/restriction, account status, KYC, support, and communications handlers | Direct automated mutation of Cody record blocked by safety layer |
 | 30 | Cody Gmail inbox delivery verification | PENDING | Connected Gmail account is tkprodesign96@gmail.com, not codywoods8899@gmail.com | Need Cody inbox access or manual inbox confirmation |
+| 31 | Support panel authentication/parity | PASS | Support login at /support-control-panel/ confirmed as support@velmorabank.us; live overview healthy; Cody appears Approved with no pending KYC/transfers | — |
+| 32 | Support staff webmail send | PASS | Controlled email to Cody returned “Message sent.” and appeared in the Support Sent folder | Recipient-inbox delivery still pending separate verification |
+| 33 | Support case parity | PASS | From Support role, reply to resolved Cody case persisted, auto-moved Resolved → In Review, reassigned to support@velmorabank.us, then returned to Resolved | Final case state Resolved |
 | 4 | Preferences save/persist | PASS | Africa/Lagos, Digital statements, transaction/security email alerts ON, in-app notifications ON; persisted after reload | — |
 | 5 | Customer support case creation | PASS | Case VLM-SUP-20261001-EB8AA6 created, General/Normal/Open | — |
 | 6 | Notification creation/read state | PASS | 'Support case created' appeared unread; Mark all read reduced unread count from 1 to 0 | — |
