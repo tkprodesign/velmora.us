@@ -21,12 +21,27 @@ if($_SERVER['REQUEST_METHOD']==='POST'&&isset($_POST['cpv2_transfer_decision']))
     cpv2Verify();$id=(int)($_POST['transaction_id']??0);$decision=(string)($_POST['decision']??'');
     if($id<=0||!in_array($decision,['Successful','Failed'],true)){cpv2Flash('error','Invalid transfer decision.');cpv2Go('/master-control-panel/transfers/');}
     $db=connectToDatabase();
-    $stmt=$db->prepare("SELECT user_email,transaction_id FROM transactions WHERE id=? AND type='Transfer' LIMIT 1");$stmt->bind_param('i',$id);$stmt->execute();$row=$stmt->get_result()->fetch_assoc();$stmt->close();
-    if($row){
-        $stmt=$db->prepare("UPDATE transactions SET status=?,posted_at=NOW(),value_date=COALESCE(value_date,CURDATE()) WHERE id=?");$stmt->bind_param('si',$decision,$id);$stmt->execute();$stmt->close();
-        createUserNotification($db,$row['user_email'],'Transfer '.$decision,'Transfer '.$row['transaction_id'].' status is now '.$decision.'.','Transfer','/dashboard/transactions/detail/?ref='.urlencode($row['transaction_id']));
-        cpv2Flash('success','Transfer status updated.');
-    }else cpv2Flash('error','Transfer not found.');
+    $stmt=$db->prepare("SELECT user_email,transaction_id,status FROM transactions WHERE id=? AND type='Transfer' LIMIT 1");$stmt->bind_param('i',$id);$stmt->execute();$row=$stmt->get_result()->fetch_assoc();$stmt->close();
+    if(!$row){
+        cpv2Flash('error','Transfer not found.');
+    }elseif(strtolower((string)$row['status'])!=='pending'){
+        cpv2Flash('error','This transfer has already been finalized.');
+    }else{
+        if($decision==='Successful'){
+            $stmt=$db->prepare("UPDATE transactions SET status=?,posted_at=NOW(),value_date=COALESCE(value_date,CURDATE()) WHERE id=? AND LOWER(status)='pending'");
+        }else{
+            $stmt=$db->prepare("UPDATE transactions SET status=?,posted_at=NULL,value_date=NULL WHERE id=? AND LOWER(status)='pending'");
+        }
+        $stmt->bind_param('si',$decision,$id);$stmt->execute();$changed=$stmt->affected_rows===1;$stmt->close();
+        if($changed){
+            $operator=trim((string)($_SESSION['user_email']??'operator@velmora'));
+            createUserNotification($db,$row['user_email'],'Transfer '.$decision,'Transfer '.$row['transaction_id'].' status is now '.$decision.'.','Transfer','/dashboard/transactions/detail/?ref='.urlencode($row['transaction_id']));
+            recordSecurityEvent($db,$row['user_email'],'Transfer Decision','Transfer '.$row['transaction_id'].' marked '.$decision.' by '.$operator.'.');
+            cpv2Flash('success','Transfer status updated.');
+        }else{
+            cpv2Flash('error','The transfer changed before this decision could be applied. Refresh and review it again.');
+        }
+    }
     $db->close();cpv2Go('/master-control-panel/transfers/');
 }
 
