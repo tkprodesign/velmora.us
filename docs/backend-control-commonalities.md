@@ -76,6 +76,18 @@ All three staff panels use the same serialized ledger-adjustment behavior:
 
 This locking must remain mirrored across Support, Admin and Master. It also coordinates with customer transfer/FX execution, which now locks the same account row while re-checking balance and account status.
 
+## Shared transfer decision integrity
+
+### Pending-only finalization — added 2026-10-06
+
+Support, Admin and Master use the same transfer-decision rules:
+
+- only a `Pending` transfer can be marked `Successful` or `Failed`;
+- the database update is conditional on the row still being Pending;
+- already-finalized transfers cannot be flipped by a crafted or stale POST;
+- each successful decision records a security audit event with the acting operator;
+- failed decisions clear posting/value-date metadata so the failed attempt is not represented as posted activity.
+
 ## Change log
 
 - 2026-10-06 — Serialized shared ledger adjustments across Support/Admin/Master with account-row locks and DB transactions; coordinated with transfer/FX execution locking.
