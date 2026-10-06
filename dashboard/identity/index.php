@@ -51,7 +51,7 @@ if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['v3_identity_save'])){
        (first_name,middle_name,last_name,suffix,gender,address1,address2,apartment_no,city,state,phone_number,date_of_birth,zip_code,
         us_citizen,dual_citizenship,country_of_residence,source_of_income,occupation,nationality,email,status,time_uploaded)
        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())");
-      $stmt->bind_param('ssssssssssssssssssssss',
+      $stmt->bind_param('sssssssssssssssssssss',
        $fields['first_name'],$fields['middle_name'],$fields['last_name'],$fields['suffix'],$fields['gender'],$fields['address1'],$fields['address2'],$fields['apartment_no'],
        $fields['city'],$fields['state'],$fields['phone_number'],$fields['date_of_birth'],$fields['zip_code'],$fields['us_citizen'],$fields['dual_citizenship'],$fields['country_of_residence'],
        $fields['source_of_income'],$fields['occupation'],$fields['nationality'],$user_email,$status);
